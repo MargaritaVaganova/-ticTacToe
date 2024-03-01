@@ -112,6 +112,9 @@ class Game:
             intro_rect.x = 15
             text_coord += intro_rect.height
             screen.blit(string_rendered, intro_rect)
+        pygame.display.flip()
+        time.sleep(4)
+        self.terminate()
 
     # Рисовка человечков
     def drawPlayers(self):
@@ -261,17 +264,23 @@ class Board:
             if flag == 1:
                 string_rendered = font.render(textA, 1, pygame.Color('red'))
                 screen.blit(string_rendered, [240, 20])
+                pygame.display.flip()
+                time.sleep(3)
                 return 2
 
             elif flag == 2:
                 string_rendered = font.render(textB, 1, pygame.Color('red'))
                 screen.blit(string_rendered, [240, 20])
+                pygame.display.flip()
+                time.sleep(2)
                 return 1
 
             if "-" not in (self.board[0][0], self.board[0][1],\
                            self.board[1][0], self.board[1][1]) and flag == 0:
                 string_rendered = font.render(textC, 1, pygame.Color('red'))
                 screen.blit(string_rendered, [400, 20])
+                pygame.display.flip()
+                time.sleep(2)
                 return 3
 
             return 0
@@ -430,7 +439,7 @@ if __name__ == '__main__':
                             a = board.check_for_winnings()
                             if a in [1, 2, 3]:
                                 pygame.display.flip()
-                                time.sleep(1)
+                                time.sleep(3)
                                 game.final_screen()
 
                         elif board.active_player == 2 and flag == 1:
@@ -445,7 +454,7 @@ if __name__ == '__main__':
                             a = board.check_for_winnings()
                             if a in [1, 2, 3]:
                                 pygame.display.flip()
-                                time.sleep(1)
+                                time.sleep(3)
                                 game.final_screen()
                     else:
                         flag2 = 1
