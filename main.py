@@ -4,6 +4,7 @@ import os
 import random
 import time
 import sqlite3
+from PIL import Image
 
 
 # Класс игры
@@ -164,7 +165,7 @@ class Board:
 
     # Отрисовка нулей и единиц
     def draw_cross_zero(self, screen, a):
-        #print(self.board)
+        # print(self.board)
         # Если второй уровень
         if self.level == 2:
             for i in range(len(self.board)):
@@ -178,7 +179,7 @@ class Board:
                     elif self.board[i][j] == 2:
                         string_rendered1 = font.render(textA, 1, pygame.Color('black'))
                         screen.blit(string_rendered1, [305 + 100 * j, 105 + 100 * i])
-        #Если первый уровень
+        # Если первый уровень
         elif self.level == 1:
             for i in range(len(self.board)):
                 for j in range(len(self.board[i])):
@@ -191,7 +192,6 @@ class Board:
                     elif self.board[i][j] == 2:
                         string_rendered1 = font.render(textA, 1, pygame.Color('black'))
                         screen.blit(string_rendered1, [305 + 150 * j, 105 + 150 * i])
-
 
     # Проверка на выигрыш кого-нибудь из игроков
     def check_for_winnings(self):
@@ -275,7 +275,7 @@ class Board:
                 time.sleep(2)
                 return 1
 
-            if "-" not in (self.board[0][0], self.board[0][1],\
+            if "-" not in (self.board[0][0], self.board[0][1], \
                            self.board[1][0], self.board[1][1]) and flag == 0:
                 string_rendered = font.render(textC, 1, pygame.Color('red'))
                 screen.blit(string_rendered, [400, 20])
@@ -353,6 +353,10 @@ class Button:
             self.activity = 1
 
 
+# Анимация крестиков и ноликов
+cross_zero = [pygame.image.load('cross1.png'), pygame.image.load('zero1.png')]
+cross_zero_count = 0
+
 if __name__ == '__main__':
 
     # Cоздаем игроков, основное поле, игровое поле, кнопки
@@ -360,25 +364,42 @@ if __name__ == '__main__':
     player1 = Player()
     player2 = Player()
     game = Game(500, 900, player1, player2)
-    #board = Board(player1, player2)
+    # board = Board(player1, player2)
     btn1 = Button(400, 300, 100, 50, "лёгкий", 0)
     btn2 = Button(505, 300, 100, 50, "обычный", 0)
-
     pygame.display.set_caption('КРЕСТИКИ-НОЛИКИ')
+
     screen = pygame.display.set_mode((game.height, game.width))
     clock = pygame.time.Clock()
     FPS = 50
     game.start_screen()
     btn1.draw(screen)
     btn2.draw(screen)
+
     flag2 = 0
     flag3 = 0
     flag4 = 0
+    flag5 = 0
     running = True
 
     # Основной цикл
     while running:
+
+        # выводим анимацию, если не перешли на основное окно
+        if flag5 == 0:
+            screen.blit(cross_zero[cross_zero_count], (720, 15))
+            pygame.display.flip()
+            time.sleep(0.5)
+            game.start_screen()
+            btn1.draw(screen)
+            btn2.draw(screen)
+            if cross_zero_count == 1:
+                cross_zero_count = 0
+            else:
+                cross_zero_count += 1
+
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 game.terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -389,6 +410,7 @@ if __name__ == '__main__':
                         flag3 = 1
                 # Если выбран обычный уровень
                 if btn2.activity == 1:
+                    flag5 = 1
                     if flag4 == 0:
                         board = Board(player1, player2, 2)
                         flag4 = 1
@@ -461,6 +483,7 @@ if __name__ == '__main__':
 
                 # Если выбран легкий уровень
                 elif btn1.activity == 1:
+                    flag5 = 1
                     if flag4 == 0:
                         board = Board(player1, player2, 1)
                         flag4 = 1
